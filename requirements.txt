@@ -1,0 +1,7 @@
+Flask
+boto3
+pillow
+pyzbar
+Pillow
+python-dotenv
+flask_cors
