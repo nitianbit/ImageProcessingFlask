@@ -1,36 +1,9 @@
 from flask import Blueprint, request, jsonify
 import os
-from .image_processing_func import extract_barcode, resize_image
-# from .image_processing_func
+import shutil
+import logging
+from .image_processing_func import extract_barcode, resize_image, scanned_barcodes_txt, increased_image_quality
 image_processing_routes = Blueprint('image_processing', __name__)
-
-# @image_processing_routes.post('/process_image')
-# def process_image():
-#     # input_folder_path = os.getenv('INPUT_FOLDER')
-#     input_folder_path = '/NitianBit/PROCESSEDIMAGES/input'
-#     # output_folder_path = os.getenv('OUTPUT_FOLDER')
-#     output_folder_path = '/NitianBit/PROCESSEDIMAGES/output'
-#     input_folder_path = os.path.abspath(input_folder_path)
-#     print(image_processing_routes)
-#     output_folder_path = os.path.abspath(output_folder_path)
-#     if not os.path.exists(output_folder_path):
-#         os.makedirs(output_folder_path)
-#
-#     for filename in os.listdir(input_folder_path):
-#         if filename.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.img')):
-#             image_path = os.path.join(input_folder_path, filename)
-#
-#             barcode = extract_barcode(image_path)
-#             # Resize image
-#             if barcode:
-#                 output_path = os.path.join(output_folder_path, f"{barcode}.jpg")
-#             else:
-#                 output_path = os.path.join(output_folder_path, filename)  # Keep original filename if no barcode
-#
-#             resize_image(image_path, output_path)
-#
-#     return jsonify({"message": "Images processed successfully."}), 200
-#     return
 
 @image_processing_routes.post('/process_image')
 def process_image():
@@ -40,6 +13,8 @@ def process_image():
     try:
         input_folder_path = os.path.abspath('/NitianBit/PROCESSEDIMAGES/input')
         output_folder_path = os.path.abspath('/NitianBit/PROCESSEDIMAGES/output')
+        temp_folder_path = os.path.abspath('/NitianBit/PROCESSEDIMAGES/temp')
+        failed_folder_path = os.path.abspath('/NitianBit/PROCESSEDIMAGES/failed')
 
         if not os.path.exists(input_folder_path):
             return jsonify({"error": "Input folder not found."}), 404
@@ -47,12 +22,21 @@ def process_image():
         if not os.path.exists(output_folder_path):
             os.makedirs(output_folder_path)
         
-        processed_count = 0
-        error_count = 0
+        if not os.path.exists(failed_folder_path):
+            os.makedirs(failed_folder_path)
+
+        uploaded_count = 0
+        compressed_count = 0
+        copied_count = 0
+        failed_count = 0
+
+        scanned_barcodes = []
 
         for filename in os.listdir(input_folder_path):
             if filename.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.img')):
                 image_path = os.path.join(input_folder_path, filename)
+
+                uploaded_count += 1
 
                 barcodes = extract_barcode(image_path)
 
@@ -63,21 +47,41 @@ def process_image():
                         output_path = os.path.join(output_folder_path, f"{output_filename}.{file_ext}")
                         resize_image(image_path, output_path)
                         processed_count += 1
+                        scanned_barcodes.append(code)
                 else:
-                    file_ext = filename.split('.')[-1].lower()
-                    output_path = os.path.join(output_folder_path, filename)
-                    resize_image(image_path, output_path)
-                    processed_count += 1
-        if processed_count == 0:
-            return jsonify({"message": "No images found in the input folder."}), 200
-        elif error_count == 0:
-            return jsonify({"message": f"All {processed_count} images processed successfully."}), 200
-        else:
-            return jsonify({"message": f"Some images processed successfully, but {error_count} encountered errors."}), 200
+                    failed_path = os.path.join(failed_folder_path, filename)
+                    shutil.move(image_path, failed_path)
+                    failed_count += 1
+                
+                temp_output_path = os.path.join(temp_folder_path, filename)
+                try:
+                    shutil.copy(image_path, temp_output_path)
+                    copied_count += 1
+                except Exception as e:
+                    logging.error(f"Error copying image: {e}")
+                    # Handle the error as needed, such as returning an error response
+                    return jsonify({"error": "Failed to copy image."}), 500
+        logging.info(f"Number of pictures uploaded today: {uploaded_count}")
+        logging.info(f"Count of compressed images: {compressed_count}")
+        logging.info(f"Quantity of images copied to the temporary folder: {copied_count}")
+        logging.info(f"Number of failed instances: {failed_count}")
+
+        scanned_barcodes_txt(scanned_barcodes)
+
+
+        return jsonify({
+            "data":{
+                uploaded_count,
+                compressed_count,
+                copied_count,
+                failed_count
+            },
+            "message":"image processed completed with following data",
+            "code":200
+        }), 200
 
     except FileNotFoundError:
         return jsonify({"error": "Output folder not found."}), 500
     except Exception as e:
         print(f"Error processing images:")
-        error_count += 1
-        return jsonify({"message": "An error occurred while processing images."}), 500
+        return jsonify({"message": "An error occurred while processing images.{e}"}), 500
