@@ -48,19 +48,22 @@ def process_image():
                         resize_image(image_path, output_path)
                         compressed_count += 1
                         scanned_barcodes.append(code)
+                        temp_output_path = os.path.join(temp_folder_path, filename)
+                        shutil.copy(image_path, temp_output_path)
+                        copied_count += 1
                 else:
                     failed_path = os.path.join(failed_folder_path, filename)
                     shutil.move(image_path, failed_path)
                     failed_count += 1
                 
-                temp_output_path = os.path.join(temp_folder_path, filename)
-                try:
-                    shutil.copy(image_path, temp_output_path)
-                    copied_count += 1
-                except Exception as e:
-                    logging.error(f"Error copying image: {e}")
-                    # Handle the error as needed, such as returning an error response
-                    return jsonify({"error": "Failed to copy image."}), 500
+                
+                # try:
+                #     shutil.copy(image_path, temp_output_path)
+                #     copied_count += 1
+                # except Exception as e:
+                #     logging.error(f"Error copying image: {e}")
+                #     # Handle the error as needed, such as returning an error response
+                #     return jsonify({"error": "Failed to copy image."}), 500
         logging.info(f"Number of pictures uploaded today: {uploaded_count}")
         logging.info(f"Count of compressed images: {compressed_count}")
         logging.info(f"Quantity of images copied to the temporary folder: {copied_count}")
