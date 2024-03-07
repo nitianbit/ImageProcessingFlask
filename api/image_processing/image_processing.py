@@ -46,7 +46,7 @@ def process_image():
                         output_filename = f"{code}_{idx}"  
                         output_path = os.path.join(output_folder_path, f"{output_filename}.{file_ext}")
                         resize_image(image_path, output_path)
-                        processed_count += 1
+                        compressed_count += 1
                         scanned_barcodes.append(code)
                 else:
                     failed_path = os.path.join(failed_folder_path, filename)
