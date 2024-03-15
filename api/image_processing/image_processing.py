@@ -2,10 +2,12 @@ from flask import Blueprint, request, jsonify
 import os
 import shutil
 import logging
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from .image_processing_func import extract_barcode, resize_image, scanned_barcodes_txt, increased_image_quality, add_logo, update_stats_file
 image_processing_routes = Blueprint('image_processing', __name__)
 
 @image_processing_routes.post('/process_image')
+@jwt_required()
 def process_image():
     """
     Process images in the input folder and save them to the output folder.
