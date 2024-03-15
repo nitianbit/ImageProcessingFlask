@@ -136,10 +136,10 @@ def update_stats_file(uploaded_count, compressed_count, copied_count, failed_cou
             lines = file.readlines()
 
         # Update the counts
-        lines[0] = f"Uploaded: {uploaded_count}\n"
-        lines[1] = f"Compressed: {compressed_count}\n"
-        lines[2] = f"Copied: {copied_count}\n"
-        lines[3] = f"Failed: {failed_count}\n"
+        lines[0] = f"Uploaded: {int(lines[0].split(':')[1]) + uploaded_count}\n"
+        lines[1] = f"Compressed: {int(lines[1].split(':')[1]) + compressed_count}\n"
+        lines[2] = f"Copied: {int(lines[2].split(':')[1]) + copied_count}\n"
+        lines[3] = f"Failed: {int(lines[3].split(':')[1]) + failed_count}\n"
 
         # Rewrite the file with updated data
         with open(stats_file_path, 'w') as file:
