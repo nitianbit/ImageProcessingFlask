@@ -10,14 +10,14 @@ def login():
     try:
         data = request.json
 
-        if 'username' in data and 'password' in data:
-            username = data['username']
+        if 'email' in data and 'password' in data:
+            username = data['email']
             password = data['password']
 
             # Check if the provided credentials match
             if username == loginData['username'] and password == loginData['password']:
-                access_token = create_access_token(identity=username)
-                return jsonify({"access_token": access_token}), 200
+                # access_token = create_access_token(identity=username)
+                return jsonify({"message": "login successfully"}), 200
             else:
                 return jsonify({"error": "Invalid username or password"}), 401
         else:

@@ -7,7 +7,7 @@ from .image_processing_func import extract_barcode, resize_image, scanned_barcod
 image_processing_routes = Blueprint('image_processing', __name__)
 
 @image_processing_routes.post('/process_image')
-@jwt_required()
+# @jwt_required()
 def process_image():
     """
     Process images in the input folder and save them to the output folder.
@@ -68,10 +68,10 @@ def process_image():
         update_stats_file(uploaded_count, compressed_count, copied_count, failed_count)
         return jsonify({
             "data": {
-                "uploaded_count": uploaded_count,
-                "compressed_count": compressed_count,
-                "copied_count": copied_count,
-                "failed_count": failed_count
+                "Uploaded": uploaded_count,
+                "Compressed": compressed_count,
+                "Copied": copied_count,
+                "Failed": failed_count
             },
             "message": "Image processing completed with the following data",
             "code": 200

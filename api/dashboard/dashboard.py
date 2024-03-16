@@ -4,8 +4,8 @@ import os
 
 dashboard_routes = Blueprint('dashboard', __name__)
 
-@dashboard_routes.get('/stats')
-@jwt_required()
+@dashboard_routes.get('/dashboard')
+# @jwt_required()
 def get_stats():
     try:
         stats_file_path = os.path.abspath('stats.txt')

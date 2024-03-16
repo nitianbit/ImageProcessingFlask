@@ -22,7 +22,7 @@ def add_logo(image_path, output_path):
         # Resize the logo to fit in the top right corner
         logo_width, logo_height = logo.size
         image_width, image_height = image.size
-        ratio = min((image_width / 4) / logo_width, (image_height / 4) / logo_height)
+        ratio = min((image_width / 8) / logo_width, (image_height / 8) / logo_height)
         new_logo_width = int(logo_width * ratio)
         new_logo_height = int(logo_height * ratio)
         logo = logo.resize((new_logo_width, new_logo_height))
