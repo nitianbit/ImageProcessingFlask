@@ -1,0 +1,4 @@
+Uploaded: 512
+Compressed: 354
+Copied: 354
+Failed: 170
