@@ -10,10 +10,6 @@ image_processing_routes = Blueprint('image_processing', __name__)
 @image_processing_routes.post('/process_image')
 def process_image():
     try:
-        # input_folder_path = '/path/to/input'
-        # output_folder_path = '/path/to/output'
-        # temp_folder_path = '/path/to/temp'
-        # failed_folder_path = '/path/to/failed'
 
         input_folder_path = os.path.abspath('/NitianBit/PROCESSEDIMAGES/input')
         output_folder_path = os.path.abspath('/NitianBit/PROCESSEDIMAGES/output')
@@ -28,7 +24,6 @@ def process_image():
         for filename in os.listdir(input_folder_path):
             if filename.lower().endswith(('jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff')):
                 image_path = os.path.join(input_folder_path, filename)
-                output_path = os.path.join(output_folder_path, filename)
 
                 uploaded_count += 1
 
@@ -39,14 +34,15 @@ def process_image():
                             output_filename = f"{barcode}_{idx}"
                             output_path = os.path.join(output_folder_path, f"{output_filename}.{file_ext}")
                             resize_image(image_path, output_path)
-                            add_logo(output_path, output_path) 
-                            shutil.copy(output_path, temp_folder_path)
+                            add_logo(image_path, output_path) 
+                            shutil.copy(image_path, temp_folder_path)
                             compressed_count += 1
                             copied_count += 1
+                      os.remove(image_path)
                 else:
                       shutil.move(image_path, failed_folder_path)
                       failed_count += 1
-                os.remove(image_path)
+                # os.remove(image_path)
 
         update_stats_file(uploaded_count, compressed_count, copied_count, failed_count)
 

@@ -3,43 +3,43 @@ from pyzbar.pyzbar import decode
 import cv2
 import os
 
-# def add_logo(image_path, output_path):
-#     """
-#     Add a logo to the top right corner of the image.
+def add_logo(image_path, output_path):
+    """
+    Add a logo to the top right corner of the image.
     
-#     :param image_path: Path to the input image file.
-#     :param logo_path: Path to the logo image file.
-#     :param output_path: Path to save the output image file.
-#     """
-#     try:
-#         # Open the input image and the logo image
-#         image = Image.open(image_path)
+    :param image_path: Path to the input image file.
+    :param logo_path: Path to the logo image file.
+    :param output_path: Path to save the output image file.
+    """
+    try:
+        # Open the input image and the logo image
+        image = Image.open(image_path)
 
-#         current_directory = os.getcwd()
-#         image_directory = os.path.join(current_directory, 'images','logo.png')
-#         logo = Image.open(image_directory)
+        current_directory = os.getcwd()
+        image_directory = os.path.join(current_directory, 'images','logo.png')
+        logo = Image.open(image_directory)
 
-#         # Resize the logo to fit in the top right corner
-#         logo_width, logo_height = logo.size
-#         image_width, image_height = image.size
-#         ratio = min((image_width / 8) / logo_width, (image_height / 8) / logo_height)
-#         new_logo_width = int(logo_width * ratio)
-#         new_logo_height = int(logo_height * ratio)
-#         logo = logo.resize((new_logo_width, new_logo_height))
+        # Resize the logo to fit in the top right corner
+        logo_width, logo_height = logo.size
+        image_width, image_height = image.size
+        ratio = min((image_width / 8) / logo_width, (image_height / 8) / logo_height)
+        new_logo_width = int(logo_width * ratio)
+        new_logo_height = int(logo_height * ratio)
+        logo = logo.resize((new_logo_width, new_logo_height))
 
-#         # Calculate the position to place the logo (top right corner)
-#         position = (image_width - new_logo_width, 0)
+        # Calculate the position to place the logo (top right corner)
+        position = (image_width - new_logo_width, 0)
 
-#         # Paste the logo onto the image
-#         image.paste(logo, position, logo)
+        # Paste the logo onto the image
+        image.paste(logo, position, logo)
 
-#         # Save the modified image
-#         image.save(output_path)
+        # Save the modified image
+        image.save(output_path)
 
-#         return True
-#     except Exception as e:
-#         print(f"Error adding logo: {e}")
-#         return False
+        return True
+    except Exception as e:
+        print(f"Error adding logo: {e}")
+        return False
 
 # def increased_image_quality(image_path):
 #     """
@@ -150,39 +150,39 @@ def scanned_barcodes_txt(scanned_barcode):
         f.write(f"{barcode}\n")
 
 
-def add_logo(image_path, output_path):
-    try:
-        current_directory = os.getcwd()
-        image_directory = os.path.join(current_directory, 'images','logo.png')
-        logo_path = Image.open(image_directory)
+# def add_logo(image_path, output_path):
+#     try:
+#         current_directory = os.getcwd()
+#         image_directory = os.path.join(current_directory, 'images','logo.png')
+#         logo_path = Image.open(image_directory)
 
-        image = Image.open(image_path)
-        logo = Image.open(logo_path)
-        logo_width, logo_height = logo.size
-        image_width, image_height = image.size
-        ratio = min((image_width / 8) / logo_width, (image_height / 8) / logo_height)
-        new_logo_size = (int(logo_width * ratio), int(logo_height * ratio))
-        logo = logo.resize(new_logo_size)
-        position = (image_width - new_logo_size[0], 0)
-        image.paste(logo, position, logo)
-        image.save(output_path)
-        return True
-    except Exception as e:
-        print(f"Error adding logo: {e}")
-        return False
+#         image = Image.open(image_path)
+#         logo = Image.open(logo_path)
+#         logo_width, logo_height = logo.size
+#         image_width, image_height = image.size
+#         ratio = min((image_width / 8) / logo_width, (image_height / 8) / logo_height)
+#         new_logo_size = (int(logo_width * ratio), int(logo_height * ratio))
+#         logo = logo.resize(new_logo_size)
+#         position = (image_width - new_logo_size[0], 0)
+#         image.paste(logo, position, logo)
+#         image.save(output_path)
+#         return True
+#     except Exception as e:
+#         print(f"Error adding logo: {e}")
+#         return False
+
+def enhance_image(img):
+    img = img.convert('L')
+    img = ImageEnhance.Contrast(img).enhance(2.0)
+    img = ImageEnhance.Sharpness(img).enhance(2.0)
+    img = img.convert('RGB')
+    return img
+
+def try_decode_barcode(img):
+    decoded_objects = decode(img)
+    return [obj.data.decode('utf-8') for obj in decoded_objects]
 
 def extract_and_enhance_barcode(image_path):
-    def enhance_image(img):
-        img = img.convert('L')
-        img = ImageEnhance.Contrast(img).enhance(2.0)
-        img = ImageEnhance.Sharpness(img).enhance(2.0)
-        img = img.convert('RGB')
-        return img
-
-    def try_decode_barcode(img):
-        decoded_objects = decode(img)
-        return [obj.data.decode('utf-8') for obj in decoded_objects]
-
     try:
         img = Image.open(image_path)
         barcode_data = try_decode_barcode(img)
