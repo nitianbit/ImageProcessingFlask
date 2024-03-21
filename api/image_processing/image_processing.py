@@ -10,7 +10,6 @@ image_processing_routes = Blueprint('image_processing', __name__)
 @image_processing_routes.post('/process_image')
 def process_image():
     try:
-
         input_folder_path = os.path.abspath('/NitianBit/PROCESSEDIMAGES/input')
         output_folder_path = os.path.abspath('/NitianBit/PROCESSEDIMAGES/output')
         temp_folder_path = os.path.abspath('/NitianBit/PROCESSEDIMAGES/temp')
@@ -24,25 +23,32 @@ def process_image():
         for filename in os.listdir(input_folder_path):
             if filename.lower().endswith(('jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff')):
                 image_path = os.path.join(input_folder_path, filename)
+                output_path = os.path.join(output_folder_path, filename)
 
-                uploaded_count += 1
-
-                barcodes = extract_and_enhance_barcode(image_path)
-                if barcodes:
-                      for idx, barcode in enumerate(barcodes): 
+                if not os.path.exists(output_path):  # Check if output file already exists
+                    uploaded_count += 1
+                    barcodes = extract_and_enhance_barcode(image_path)
+                    if barcodes:
+                        for idx, barcode in enumerate(barcodes): 
                             file_ext = filename.split('.')[-1].lower()
                             output_filename = f"{barcode}_{idx}"
                             output_path = os.path.join(output_folder_path, f"{output_filename}.{file_ext}")
                             resize_image(image_path, output_path)
                             add_logo(image_path, output_path) 
-                            shutil.copy(image_path, temp_folder_path)
+                            # if not os.path.exists(os.path.join(temp_folder_path, filename)):
+                            #     shutil.copy(image_path, temp_folder_path)
                             compressed_count += 1
                             copied_count += 1
-                      os.remove(image_path)
+                        if not os.path.exists(os.path.join(temp_folder_path, filename)):
+                            shutil.move(image_path, temp_folder_path)
+                    else:
+                        if not os.path.exists(os.path.join(failed_folder_path, filename)):
+                            shutil.move(image_path, failed_folder_path)
+                            failed_count += 1
                 else:
-                      shutil.move(image_path, failed_folder_path)
-                      failed_count += 1
-                # os.remove(image_path)
+                    # Handle existing file in output folder
+                    pass
+
 
         update_stats_file(uploaded_count, compressed_count, copied_count, failed_count)
 
