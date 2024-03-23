@@ -2,6 +2,7 @@ from PIL import Image, ImageEnhance
 from pyzbar.pyzbar import decode
 import cv2
 import os
+from datetime import datetime
 
 def add_logo(image_path, output_path):
     """
@@ -203,24 +204,43 @@ def resize_image(image_path, output_path):
         print(f"Error resizing image: {e}")
 
 def update_stats_file(uploaded_count, compressed_count, copied_count, failed_count):
-    stats_file_path = os.path.join(os.getcwd(), 'stats.txt')
     try:
+        # Construct the path to the statistics file
+        static_folder_path = os.path.join(os.getcwd(), 'stats')
+        if not os.path.exists(static_folder_path):
+            os.makedirs(static_folder_path)
+        current_date = datetime.now().strftime('%d_%m_%Y')
+        stats_file_path = os.path.join(os.getcwd(), 'stats', f'stats_{current_date}.txt')
+
+        # Check if the file exists
         if os.path.exists(stats_file_path):
+            # Open the file for reading and writing
             with open(stats_file_path, 'r+') as file:
+                # Read the current statistics
                 stats = file.readlines()
                 stats = [int(line.strip().split(': ')[1]) for line in stats]
+
+                # Update the statistics
                 uploaded_count += stats[0]
                 compressed_count += stats[1]
                 copied_count += stats[2]
                 failed_count += stats[3]
+
+                # Move the file pointer to the beginning of the file
                 file.seek(0)
         else:
+            # Create the file if it doesn't exist
             file = open(stats_file_path, 'w')
+
+        # Write the updated statistics to the file
         file.write(f"Uploaded: {uploaded_count}\n")
         file.write(f"Compressed: {compressed_count}\n")
         file.write(f"Copied: {copied_count}\n")
         file.write(f"Failed: {failed_count}\n")
+
+        # Close the file
         file.close()
+
     except Exception as e:
         print(f"Error updating stats file: {e}")
 

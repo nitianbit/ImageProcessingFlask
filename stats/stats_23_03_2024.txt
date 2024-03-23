@@ -1,0 +1,4 @@
+Uploaded: 2
+Compressed: 1
+Copied: 1
+Failed: 1

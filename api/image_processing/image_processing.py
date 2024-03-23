@@ -10,10 +10,12 @@ image_processing_routes = Blueprint('image_processing', __name__)
 @image_processing_routes.post('/process_image')
 def process_image():
     try:
-        input_folder_path = os.path.abspath('/NitianBit/PROCESSEDIMAGES/input')
-        output_folder_path = os.path.abspath('/NitianBit/PROCESSEDIMAGES/output')
-        temp_folder_path = os.path.abspath('/NitianBit/PROCESSEDIMAGES/temp')
-        failed_folder_path = os.path.abspath('/NitianBit/PROCESSEDIMAGES/failed')
+        input_folder_path = os.path.abspath('/Users/shubhamgoyal/Desktop/PMJ_final/ImageProcessingFlask/input')
+        output_folder_path = os.path.abspath('/Users/shubhamgoyal/Desktop/PMJ_final/ImageProcessingFlask/output')
+        temp_folder_path = os.path.abspath('/Users/shubhamgoyal/Desktop/PMJ_final/ImageProcessingFlask/temp')
+        failed_folder_path = os.path.abspath('/Users/shubhamgoyal/Desktop/PMJ_final/ImageProcessingFlask/failed')
+        temp_bcode_folder_path  = os.path.abspath('/Users/shubhamgoyal/Desktop/PMJ_final/ImageProcessingFlask/temp_bcode')
+        barcode_txt_path = "/Users/shubhamgoyal/Desktop/PMJ_final/ImageProcessingFlask/barcode.txt"
 
         uploaded_count = 0
         compressed_count = 0
@@ -31,10 +33,14 @@ def process_image():
                     if barcodes:
                         for idx, barcode in enumerate(barcodes): 
                             file_ext = filename.split('.')[-1].lower()
-                            output_filename = f"{barcode}_{idx}"
+                            output_filename = f"{barcode}"
                             output_path = os.path.join(output_folder_path, f"{output_filename}.{file_ext}")
+                            temp_bcode_path = os.path.join(temp_bcode_folder_path, f"{output_filename}.{file_ext}")
+                            shutil.copy(image_path,temp_bcode_path)
                             resize_image(image_path, output_path)
                             add_logo(image_path, output_path) 
+                            with open(barcode_txt_path, 'a') as barcode_txt:
+                             barcode_txt.write(f"{barcode}\n")
                             # if not os.path.exists(os.path.join(temp_folder_path, filename)):
                             #     shutil.copy(image_path, temp_folder_path)
                             compressed_count += 1
@@ -42,9 +48,10 @@ def process_image():
                         if not os.path.exists(os.path.join(temp_folder_path, filename)):
                             shutil.move(image_path, temp_folder_path)
                     else:
-                        if not os.path.exists(os.path.join(failed_folder_path, filename)):
                             shutil.move(image_path, failed_folder_path)
                             failed_count += 1
+                        
+
                 else:
                     # Handle existing file in output folder
                     pass
