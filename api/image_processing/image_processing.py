@@ -2,20 +2,33 @@ from flask import Blueprint, request, jsonify
 import os
 import shutil
 import logging
+import sys
 from collections import defaultdict
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from .image_processing_func import extract_and_enhance_barcode, resize_image, add_logo, update_stats_file
+
+# sys.path.insert(0, "/utils/constant.py")
+from utils.constant import *
+
+
 image_processing_routes = Blueprint('image_processing', __name__)
 
 @image_processing_routes.post('/process_image')
 def process_image():
     try:
-        input_folder_path = os.path.abspath('../pmj/input')
-        output_folder_path = os.path.abspath('../pmj/output')
-        temp_folder_path = os.path.abspath('../pmj/temp')
-        failed_folder_path = os.path.abspath('../pmj/failed')
-        temp_bcode_folder_path  = os.path.abspath('../pmj/temp_bcode')
-        barcode_txt_path = os.path.abspath('../pmj/barcode.txt')
+        # input_folder_path = os.path.abspath('/NitianBit/PROCESSEDIMAGES/input')
+        # output_folder_path = os.path.abspath('/NitianBit/PROCESSEDIMAGES/output')
+        # temp_folder_path = os.path.abspath('/NitianBit/PROCESSEDIMAGES/temp')
+        # failed_folder_path = os.path.abspath('/NitianBit/PROCESSEDIMAGES/failed')
+        # temp_bcode_folder_path  = os.path.abspath('/NitianBit/PROCESSEDIMAGES/temp_bcode')
+        # barcode_txt_path = os.path.abspath('/NitianBit/PROCESSEDIMAGES/barcode.txt')
+
+        input_folder_path = os.path.abspath(input_folder_path_constant)
+        output_folder_path = os.path.abspath(output_folder_path_constant)
+        temp_folder_path = os.path.abspath(temp_folder_path_constant)
+        failed_folder_path = os.path.abspath(failed_folder_path_constant)
+        temp_bcode_folder_path  = os.path.abspath(temp_bcode_folder_path_constant)
+        barcode_txt_path = os.path.abspath(barcode_txt_path_constant)
         uploaded_count = 0
         compressed_count = 0
         copied_count = 0
@@ -46,10 +59,15 @@ def process_image():
                             copied_count += 1
                         if not os.path.exists(os.path.join(temp_folder_path, filename)):
                             shutil.move(image_path, temp_folder_path)
+                        else:
+                            os.remove(image_path)
                     else:
+                        if not os.path.exists(os.path.join(failed_folder_path, filename)):
                             shutil.move(image_path, failed_folder_path)
-                            failed_count += 1
-                        
+                        else:
+                            os.remove(image_path)
+                       
+                        failed_count += 1
 
                 else:
                     # Handle existing file in output folder
