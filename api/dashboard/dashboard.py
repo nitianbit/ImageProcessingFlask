@@ -8,7 +8,7 @@ dashboard_routes = Blueprint('dashboard', __name__)
 # @jwt_required()
 def get_stats():
     try:
-        stats_file_path = os.path.abspath('stats.txt')
+        stats_file_path = os.path.abspath('../pmj/stats/stat_24_03_2024.txt')
 
         if not os.path.exists(stats_file_path):
             return jsonify({"error": "Stats file not found"}), 404

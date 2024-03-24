@@ -10,13 +10,12 @@ image_processing_routes = Blueprint('image_processing', __name__)
 @image_processing_routes.post('/process_image')
 def process_image():
     try:
-        input_folder_path = os.path.abspath('home/pmj/input')
-        output_folder_path = os.path.abspath('home/pmj/output')
-        temp_folder_path = os.path.abspath('home/pmj/temp')
-        failed_folder_path = os.path.abspath('home/pmj/failed')
-        temp_bcode_folder_path  = os.path.abspath('home/pmj/temp_bcode')
-        barcode_txt_path = "home/pmj/barcode.txt"
-
+        input_folder_path = os.path.abspath('../pmj/input')
+        output_folder_path = os.path.abspath('../pmj/output')
+        temp_folder_path = os.path.abspath('../pmj/temp')
+        failed_folder_path = os.path.abspath('../pmj/failed')
+        temp_bcode_folder_path  = os.path.abspath('../pmj/temp_bcode')
+        barcode_txt_path = os.path.abspath('../pmj/barcode.txt')
         uploaded_count = 0
         compressed_count = 0
         copied_count = 0
