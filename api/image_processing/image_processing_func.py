@@ -206,7 +206,7 @@ def resize_image(image_path, output_path):
 def update_stats_file(uploaded_count, compressed_count, copied_count, failed_count):
     try:
         # Construct the path to the statistics file
-        stat_folder_path = ('/stats')
+        stat_folder_path = ('home/pmj/stats')
         
         if not os.path.exists(stat_folder_path):
            os.makedirs(stat_folder_path)
