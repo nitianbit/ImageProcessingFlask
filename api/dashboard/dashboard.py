@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import os
+from datetime import datetime
 
 dashboard_routes = Blueprint('dashboard', __name__)
 
@@ -8,7 +9,10 @@ dashboard_routes = Blueprint('dashboard', __name__)
 # @jwt_required()
 def get_stats():
     try:
-        stats_file_path = os.path.abspath('../pmj/stats/stat_24_03_2024.txt')
+        stat_folder_path = os.path.abspath('../pmj/stats')
+
+        current_date = datetime.now().strftime('%d_%m_%Y')
+        stats_file_path = os.path.join(stat_folder_path, f'stat_{current_date}.txt')
 
         if not os.path.exists(stats_file_path):
             return jsonify({"error": "Stats file not found"}), 404
