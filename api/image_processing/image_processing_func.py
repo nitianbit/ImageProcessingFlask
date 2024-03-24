@@ -206,11 +206,13 @@ def resize_image(image_path, output_path):
 def update_stats_file(uploaded_count, compressed_count, copied_count, failed_count):
     try:
         # Construct the path to the statistics file
-        static_folder_path = os.path.join(os.getcwd(), 'stats')
-        if not os.path.exists(static_folder_path):
-            os.makedirs(static_folder_path)
+        stat_folder_path = ('/stats')
+        
+        if not os.path.exists(stat_folder_path):
+           os.makedirs(stat_folder_path)
+
         current_date = datetime.now().strftime('%d_%m_%Y')
-        stats_file_path = os.path.join(os.getcwd(), 'stats', f'stats_{current_date}.txt')
+        stats_file_path = os.path.join(stat_folder_path, f'stat_{current_date}.txt')
 
         # Check if the file exists
         if os.path.exists(stats_file_path):
