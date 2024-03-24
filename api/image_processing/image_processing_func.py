@@ -4,6 +4,11 @@ import cv2
 import os
 from datetime import datetime
 
+from utils.constant import (
+    current_date_barcode_txt_path_constant,
+    current_iteration_barcode_txt_path_constant
+)
+
 def add_logo(image_path, output_path):
     """
     Add a logo to the top right corner of the image.
@@ -206,13 +211,24 @@ def resize_image(image_path, output_path):
 def update_stats_file(uploaded_count, compressed_count, copied_count, failed_count):
     try:
         # Construct the path to the statistics file
-        stat_folder_path =  os.path.abspath('../pmj/stats')
+        stat_folder_path =  os.path.abspath(current_date_barcode_txt_path_constant)
+        current_stat_folder_path =  os.path.abspath(current_iteration_barcode_txt_path_constant)
         
         if not os.path.exists(stat_folder_path):
            os.makedirs(stat_folder_path)
 
+        if not os.path.exists(current_stat_folder_path):
+           os.makedirs(current_stat_folder_path)
+
         current_date = datetime.now().strftime('%d_%m_%Y')
         stats_file_path = os.path.join(stat_folder_path, f'stat_{current_date}.txt')
+        current_iteration_file_path = os.path.join(stat_folder_path, f'current_iteration.txt')
+
+        with open(current_iteration_file_path, 'w') as current_iteration_file:
+            current_iteration_file.write(f"Uploaded: {uploaded_count}\n")
+            current_iteration_file.write(f"Compressed: {compressed_count}\n")
+            current_iteration_file.write(f"Copied: {copied_count}\n")
+            current_iteration_file.write(f"Failed: {failed_count}\n")
 
         # Check if the file exists
         if os.path.exists(stats_file_path):
