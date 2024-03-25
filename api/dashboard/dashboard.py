@@ -18,7 +18,7 @@ def get_stats():
 
         current_date = datetime.now().strftime('%d_%m_%Y')
         stats_file_path = os.path.join(stat_folder_path, f'stat_{current_date}.txt')
-        current_iteration_file_path = os.path.join(stat_folder_path, f'current_iteration.txt')
+        current_iteration_file_path = os.path.join(current_stat_folder_path, f'current_iteration.txt')
 
         if not os.path.exists(stats_file_path):
             return jsonify({"error": "Stats file not found"}), 404
