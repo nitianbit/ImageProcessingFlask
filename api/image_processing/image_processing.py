@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 import os
+from datetime import datetime
 import shutil
 import logging
 import sys
@@ -28,7 +29,17 @@ def process_image():
         temp_folder_path = os.path.abspath(temp_folder_path_constant)
         failed_folder_path = os.path.abspath(failed_folder_path_constant)
         temp_bcode_folder_path  = os.path.abspath(temp_bcode_folder_path_constant)
-        barcode_txt_path = os.path.abspath(barcode_txt_path_constant)
+        barcode_folder_path = os.path.abspath(barcode_txt_path_constant)
+        if not os.path.exists(barcode_folder_path):
+           os.makedirs(barcode_folder_path)
+
+        current_date = datetime.now().strftime('%d_%m_%Y')
+        barcode_txt_path = os.path.join(barcode_folder_path,f'barcode_{current_date}.txt')
+
+        if not os.path.exists(barcode_txt_path) :
+            with open(barcode_txt_path, 'w') as file:
+              pass
+
         uploaded_count = 0
         compressed_count = 0
         copied_count = 0
