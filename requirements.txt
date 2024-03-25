@@ -6,3 +6,4 @@ Pillow
 python-dotenv
 flask_cors
 flask-jwt-extended
+opencv-python
