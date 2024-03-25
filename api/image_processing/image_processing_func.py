@@ -222,18 +222,14 @@ def update_stats_file(uploaded_count, compressed_count, copied_count, failed_cou
 
         current_date = datetime.now().strftime('%d_%m_%Y')
         stats_file_path = os.path.join(stat_folder_path, f'stat_{current_date}.txt')
-        current_iteration_file_path = os.path.join(stat_folder_path, f'current_iteration.txt')
-         
-        if not os.path.exits(current_iteration_file_path) :
-           with open(stats_file_path, 'w') as file:
-             pass
+        current_iteration_file_path = os.path.join(current_stat_folder_path, f'current_iteration.txt')
            
         with open(current_iteration_file_path, 'w') as current_iteration_file:
             current_iteration_file.write(f"Uploaded: {uploaded_count}\n")
             current_iteration_file.write(f"Compressed: {compressed_count}\n")
             current_iteration_file.write(f"Copied: {copied_count}\n")
             current_iteration_file.write(f"Failed: {failed_count}\n")
-
+        
         current_iteration_file.close()
     
         # Check if the file exists
@@ -256,6 +252,7 @@ def update_stats_file(uploaded_count, compressed_count, copied_count, failed_cou
             # Create the file if it doesn't exist
          with open(stats_file_path, 'w') as file:
           pass
+         
         with open(stats_file_path, 'w') as file:
             file.write(f"Uploaded: {uploaded_count}\n")
             file.write(f"Compressed: {compressed_count}\n")
